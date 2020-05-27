@@ -1,0 +1,178 @@
+Skip to content
+Search or jump to…
+
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@zempo123 
+zempo123
+/
+stopword001
+1
+00
+ Code
+ Issues 0
+ Pull requests 0 Actions
+ Projects 0
+ Wiki
+ Security 0
+ Insights
+ Settings
+stopword001/src/Main.java /
+@zempo123 zempo123 Initial commit
+9bc1195 29 days ago
+139 lines (90 sloc)  3.41 KB
+  
+import java.io.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.*;
+
+class Main {
+
+    public static <K, V extends Comparable<V>> Map<K, V> sortByValues(final Map<K, V> map)
+    {
+        Comparator<K> valueComparator = new Comparator<K>()
+        {
+            public int compare(K k1, K k2) {
+                int compare =  map.get(k2).compareTo(map.get(k1));
+                if (compare == 0)
+                    return 1;
+                else
+                    return compare;
+            }
+        };
+        Map<K, V> sortedByValues = new TreeMap<K, V>(valueComparator);
+        sortedByValues.putAll(map);
+
+        return sortedByValues;
+    }
+
+    public static void main(String[] args) throws IOException {
+
+        FileReader fr1=new FileReader("C:\\Users\\zem\\Downloads\\common-english-words.txt");
+        BufferedReader bf1 =new BufferedReader(fr1);
+
+        HashSet set = new HashSet<String>();
+
+        HashMap stopword = new HashMap<String, Integer>();
+
+        String str1;
+
+        while ((str1 = bf1.readLine())!=null){
+            str1.trim();
+            set.add(str1);
+            String[] patterns = str1.split(",");
+            for (String OnePattern : patterns ){
+                stopword.put(OnePattern,0);
+            }
+        }
+//        System.out.println(stopword);
+        bf1.close();
+        fr1.close();
+
+
+        FileReader fr2= new FileReader("C:\\Users\\zem\\Downloads\\2016-01_Parse.txt");
+        BufferedReader bf2 = new BufferedReader(fr2);
+
+        String str2;
+        int count=0;
+
+        HashMap wordcnt = new HashMap <String, Integer>();
+
+        while ((str2=bf2.readLine())!=null){
+
+
+
+            str2=str2.replaceAll("\\d+"," ");
+            str2= str2.replaceAll("[\\pP\\p{Punct}]"," ");
+            str2= str2.replaceAll("[\\u4e00-\\u9fa5]", " ");
+            str2=str2.replaceAll("####","##");
+
+
+            count++;
+            String[] items_word = new String(str2).trim().split("\\s+");
+
+            for (int i=0;i<items_word.length;i++) {
+
+                items_word[i] = items_word[i].toLowerCase();
+
+                if (wordcnt.containsKey(items_word[i])) {
+
+
+
+                    if (stopword.containsKey(items_word[i])){
+                        break;
+                    }
+
+                    int temp = (int) wordcnt.get(items_word[i]);
+                    temp++;
+                    wordcnt.put(items_word[i], temp);
+
+                } else {
+                    wordcnt.put(items_word[i], 1);
+                }
+
+
+            }
+        }
+        fr2.close();
+
+        FileWriter fw=new FileWriter("C:\\Users\\zem\\Downloads\\2016_Parse.txt");
+        BufferedWriter bf=new BufferedWriter(fw);
+        for (Object key : wordcnt.keySet()) {
+            System.out.println(key + " : " + wordcnt.get(key));
+            bf.write(key + "\t" + wordcnt.get(key));
+            bf.newLine();
+        }
+        bf.flush();
+        fw.close();
+
+
+        TreeMap<String, Integer> treemap = new TreeMap<String, Integer>();
+        treemap.put("Key1", 5);
+        treemap.put("Key2", 1);
+        treemap.put("Key3", 2);
+        treemap.put("Key4", 4);
+        treemap.put("Key5", 3);
+        Map sortedMap = sortByValues(treemap);
+        Set set1 = sortedMap.entrySet();
+        Iterator i = set1.iterator();
+        while(i.hasNext()) {
+            Map.Entry me = (Map.Entry)i.next();
+            System.out.print(me.getKey() + ": ");
+            System.out.println(me.getValue());
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+}
+© 2020 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Help
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
